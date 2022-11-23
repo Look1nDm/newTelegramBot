@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Getter
@@ -23,7 +23,7 @@ public class NotificationTask {
     @GeneratedValue
     private Long id;
     private String message;
-    private LocalDateTime datetime;
+    private LocalDate datetime;
 
     @Override
     public boolean equals(Object o) {
