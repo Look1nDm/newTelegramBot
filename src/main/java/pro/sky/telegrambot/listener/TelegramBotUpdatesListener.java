@@ -124,7 +124,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             LocalDate localDate = LocalDate.now(); // узнаем дату
             String day = String.valueOf(localDate.getDayOfMonth());// делаем из числового дня строку
             String month = String.valueOf(localDate.getMonthValue());// делаем из числового месяца строку
-            String dayAndMonth = month+"-"+day;// скрепляем, как по формату из LocalDate
+            String dayAndMonth = day+"."+month;// скрепляем, как по формату из LocalDate
             NotificationTask birthdayKent = notificationTaskRepository.findContains(dayAndMonth);// закидываем в метод с запрос в БД
             if (birthdayKent!=null){
             telegramBot.execute(new SendMessage(birthdayKent.getChatId(),
