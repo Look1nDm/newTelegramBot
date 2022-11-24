@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.request.*;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pro.sky.telegrambot.exceptions.InvalidDataException;
 import pro.sky.telegrambot.model.NotificationTask;
@@ -102,7 +103,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         // паттерн для вычленения текстовой части в сообщении
         Pattern patternString = Pattern.compile("([А-Я|а-я])+\\s([А-Я|а-я])+");
         NotificationTask notificationTaskCopyInDB = new NotificationTask();
-        notificationTaskCopyInDB.setId(message.chat().id());
+        notificationTaskCopyInDB.setChatId(message.chat().id());
 
         Matcher matcherDate = patternDate.matcher(message.text().trim());
         Matcher matcherString = patternString.matcher(message.text().trim());
@@ -116,5 +117,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         notificationTaskCopyInDB.setMessage(text);
 
         return notificationTaskCopyInDB;
+    }
+
+    @Scheduled(cron = "0 0/1 * * * *")
+    public void run() {
+            LocalDate localDate = LocalDate.now(); // узнаем дату
+            String day = String.valueOf(localDate.getDayOfMonth());// делаем из числового дня строку
+            String month = String.valueOf(localDate.getMonthValue());// делаем из числового месяца строку
+            String dayAndMonth = month+"-"+day;// скрепляем, как по формату из LocalDate
+            NotificationTask birthdayKent = notificationTaskRepository.findContains(dayAndMonth);// закидываем в метод с запрос в БД
+            if (birthdayKent!=null){
+            telegramBot.execute(new SendMessage(birthdayKent.getChatId(),
+                    "Сегодня у твоего кента " + birthdayKent.getMessage() +
+                            " день рождение! Не забудь поздравить."));}
     }
 }
